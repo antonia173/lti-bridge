@@ -40,7 +40,8 @@ module LtiBridge
 
         jwk_set = fetch_jwk(uri: platform.jwks_url, kid: kid)
         jwt = JSON::JWT.decode(@id_token_string, jwk_set).as_json
-
+        platform = Platform.find_by(issuer: issuer, client_id: jwt["aud"])
+        
         [jwt, issuer, platform]
       end
 
