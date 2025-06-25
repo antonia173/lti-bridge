@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
   spec.summary = "Helper gem for integrating LTI 1.3 into Rails tools"
   spec.description = "LTI Bridge 1.3 is a Ruby gem that simplifies integration of Learning Tools Interoperability (LTI) 1.3 into your Ruby on Rails tool. It handles login initiation, ID token validation, Deep Linking, Assignment and Grade Services, Names and Role Provisioning Services and Dynamic Registration. This gem makes it easier to connect your Rails application to LTI-complient LMS platforms."
 
-  spec.homepage = "https://github.com/antonia173/"
+  spec.homepage = "https://github.com/antonia173/lti-bridge"
 
   spec.license = "MIT"
   spec.required_ruby_version = ">= 3.0.0"
