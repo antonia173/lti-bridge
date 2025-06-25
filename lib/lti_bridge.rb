@@ -1,0 +1,18 @@
+module LtiBridge
+  autoload :Cache,                   "lti_bridge/cache"
+  autoload :LoginInitiation,         "lti_bridge/login/login_initiation"
+  autoload :Jwk,                     "lti_bridge/security/jwk"
+  autoload :AccessToken,             "lti_bridge/security/access_token"
+  autoload :LaunchRequest,           "lti_bridge/launch/launch_request"
+  autoload :LaunchData,              "lti_bridge/launch/launch_data"
+  autoload :ContentItem,             "lti_bridge/deep_linking/content_item"
+  autoload :DeepLinkingResponse,     "lti_bridge/deep_linking/deep_linking_response"
+  autoload :NRPS,                    "lti_bridge/nrps/nrps"
+  autoload :AGS,                     "lti_bridge/ags/ags"
+  autoload :LineItem,                "lti_bridge/ags/line_item"
+  autoload :Score,                   "lti_bridge/ags/score"
+  autoload :Result,                  "lti_bridge/ags/result"
+  autoload :DynamicRegistration,     "lti_bridge/dynamic_registration/dynamic_registration"
+  autoload :ToolConfiguration,       "lti_bridge/dynamic_registration/tool_configuration"
+  autoload :Errors,                  "lti_bridge/errors/invalid_launch"
+end
