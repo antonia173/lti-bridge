@@ -16,8 +16,14 @@ class LtiController < ApplicationController
     return render(plain: "This page requires LTI 1.3 launch.", status: :unauthorized) unless params[:id_token].present?
 
     launch = LtiBridge::LaunchRequest.new(request)
-    @data = launch.data
-    @name = @data.name || @data.given_name || "User"
+
+    # Example usage:
+    # You can extract things like the user ID, name, roles, etc. from the launch
+    # payload and use them in your application.
+    data = launch.data
+    @name = data.name || data.given_name || "User"
+
+    render plain: "LTI Launch successful, welcome #{@name}!"
   end
 
   # Exposes your tool’s public key so platforms can verify JWTs signed by your tool.

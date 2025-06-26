@@ -19,10 +19,6 @@ module LtiBridge
       template "lti_controller.rb", "app/controllers/lti_controller.rb"
     end
 
-    def create_view_file
-      template "example_launch.html.erb", "app/views/lti/example_launch.html.erb"
-    end
-
     def add_routes
       route <<~ROUTES
         post  '/lti/login',  to: 'lti#login'
