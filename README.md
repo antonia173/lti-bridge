@@ -152,8 +152,7 @@ score_data = LtiBridge::Score.new(
 )
 
 platform = Platform.find_by(issuer: launch_data.issuer, client_id: launch_data.audience)
-ags_token = LtiBridge::AccessToken.fetch(issuer: platform.issuer, 
-                                        client_id: platform.client_id, 
+ags_token = LtiBridge::AccessToken.fetch(client_id: platform.client_id, 
                                         token_url: platform.token_url,
                                         scope: launch_data.ags_scope)
 
@@ -170,8 +169,7 @@ ags.submit_score(score: score_data, lineitem: lineitem)
 Fetching results:
 ```
 platform = Platform.find_by(issuer: launch_data.issuer, client_id: launch_data.audience)
-token = LtiBridge::AccessToken.fetch(issuer: platform.issuer, 
-                                        client_id: platform.client_id, 
+token = LtiBridge::AccessToken.fetch(client_id: platform.client_id, 
                                         token_url: platform.token_url,
                                         scope: launch_data.ags_scope)
 
@@ -188,8 +186,7 @@ ags.get_results(lineitem_id: lineitem.id)
 Names and Role Provisioning Services lets your tool fetch the list of users and their roles within the current course. You can optionally query members by role (e.g., Learner, Instructor). The response includes user details (e.g. user ID, name, username, email and role), allowing your tool to understand who is in the course and their permissions.
 ```
 platform = Platform.find_by(issuer: launch_data.issuer, client_id: launch_data.audience)
-token = LtiBridge::AccessToken.fetch(issuer: platform.issuer, 
-                                        client_id: platform.client_id, 
+token = LtiBridge::AccessToken.fetch(client_id: platform.client_id, 
                                         token_url: platform.token_url,
                                         scope: launch_data.nrps_scope)
 nrps = LtiBridge::NRPS.new(access_token: token, memberships_url: launch_data.nrps_context_memberships_url)
@@ -213,7 +210,7 @@ Dynamic Registration enables a tool to automatically register itself with an LMS
       jwks_url: result[:platform][:jwks_url]
     )
 
-    render plain: "Dynamic registration successful!"
+    render html: LtiBridge::DynamicRegistration.html_page.html_safe, content_type: 'text/html', layout: false
   end
 
   def tool_config_builder

@@ -7,12 +7,11 @@ require_relative "jwk"
 module LtiBridge
   class AccessToken
 
-    def self.fetch(issuer:, client_id:, token_url:, scope:)
-      new(issuer: issuer, client_id: client_id, token_url: token_url, scope: scope).fetch
+    def self.fetch(client_id:, token_url:, scope:)
+      new(client_id: client_id, token_url: token_url, scope: scope).fetch
     end
 
-    def initialize(issuer:, client_id:, token_url:, scope:)
-      @issuer = issuer,
+    def initialize(client_id:, token_url:, scope:)
       @client_id = client_id
       @token_url = token_url
       @scope = Array(scope)
@@ -34,7 +33,7 @@ module LtiBridge
 
     def jwt
       jwt = JSON::JWT.new(
-        iss: @issuer,
+        iss: @client_id,
         sub: @client_id,
         aud: @token_url,
         iat: Time.now.to_i,

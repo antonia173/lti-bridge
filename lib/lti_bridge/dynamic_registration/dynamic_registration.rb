@@ -42,5 +42,23 @@ module LtiBridge
               response: response 
             }
     end
+
+    def self.html_page
+      <<~HTML
+      <!doctype html>
+      <meta charset="utf-8">
+      <title>LTI Registration</title>
+      <script>
+        (function() {
+          try {
+            (window.opener || window.parent).postMessage({ subject: 'org.imsglobal.lti.close' }, '*');
+          } catch (e) {}
+          setTimeout(function(){ try { window.close(); } catch(e){} }, 500);
+        })();
+      </script>
+      <noscript>Registration completed. You can close this window.</noscript>
+      HTML
+    end
+
   end
 end
