@@ -5,7 +5,6 @@ require "uri"
 require_relative "line_item"
 require_relative "score"
 require_relative "result"
-require_relative "logger"
 
 module LtiBridge
   class AGS
