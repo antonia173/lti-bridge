@@ -12,7 +12,7 @@ module LtiBridge
       state = SecureRandom.hex(16)
       nonce = SecureRandom.hex(16)
 
-      OidcAuthUri.new(
+      OIDCAuthUri.new(
         issuer: params["iss"],
         client_id: params["client_id"],
         auth_url: auth_url,

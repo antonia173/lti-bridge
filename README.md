@@ -130,19 +130,30 @@ This will render and auto-submit an HTML form with a signed JWT ([LtiDeepLinking
 LTI services (such as AGS and NRPS) use RESTful HTTP communication secured via OAuth 2.0 (Client Credentials Flow with JWT). The `AccessToken` class manages this flow by generating a signed JWT and posting it to the platform’s token endpoint. This token is required to authenticate API requests and ensures the tool has permission to access specific LTI services based on the provided `scope`.
 
 ### AGS
-Assignment and Grade Services (AGS) is supported through two main classes:
-- `LineItem`: Manages gradebook columns (line items)
-  - `save`, `update`, `delete`: Create, update, or remove a line item
-  - `self.get_lineitems`, `self.find_by`, `self.get`: Fetch line items
-  - `self.find_or_create_by`: Reuse existing or create new line item
-- `AGS`: Manages scores and results for a line item
-  - `submit_score`: Submit or update a user's score for a specific line item
-  - `get_results`: Retrieve all results for the given line item
-
-All methods communicate with the [LTI AGS OpenAPI](https://www.imsglobal.org/spec/lti-ags/v2p0/openapi#/default).
+Assignment and Grade Services (AGS) is supported through the following classes:
+- `LineItem`: Represents a gradebook column (line item). DTO object.
+- `Score`: Represents a score submission for a user. DTO object. 
+- `Result`: Represents current grade (result) stored in the gradebook. DTO object.  
+- `AGS`: The client responsible for communicating with the [LTI AGS OpenAPI](https://www.imsglobal.org/spec/lti-ags/v2p0/openapi#/default).
+  - Line Item service: `find_or_create_line_item`, `get_line_items`, `get_line_item`,  
+    `find_line_item`, `create_line_item`, `update_line_item`, `delete_line_item`  
+  - Score service:  `submit_score`  
+  - Result service: `get_results`
 
 Submitting score:
 ```
+platform = Platform.find_by(issuer: launch_data.issuer, client_id: launch_data.audience)
+token = LtiBridge::AccessToken.fetch(client_id: platform.client_id, 
+                                        token_url: platform.token_url,
+                                        scope: launch_data.ags_scope)
+ags = LtiBridge::AGS.new(access_token: token)          
+
+line_item = ags.find_or_create_line_item(
+  lineitems_url:   launch_data.ags_lineitems,
+  label:           "Example line item",
+  score_maximum:   1.0,
+)
+
 score_data = LtiBridge::Score.new(
     user_id: launch_data.user_id,
     activity_progress: "Completed",
@@ -151,20 +162,7 @@ score_data = LtiBridge::Score.new(
     score_maximum: 1.0
 )
 
-platform = Platform.find_by(issuer: launch_data.issuer, client_id: launch_data.audience)
-ags_token = LtiBridge::AccessToken.fetch(client_id: platform.client_id, 
-                                        token_url: platform.token_url,
-                                        scope: launch_data.ags_scope)
-
-lineitem = LtiBridge::LineItem.new(
-    label: "Example title",
-    score_maximum: 1.0,
-    resource_link_id: launch_data.resource_link["id"],
-)
-lineitem.save(access_token: ags_token, lineitems_url: launch_data.ags_lineitems)
-
-ags = LtiBridge::AGS.new(access_token: ags_token)
-ags.submit_score(score: score_data, lineitem: lineitem)
+ags.submit_score(score: score_data, lineitem_id: line_item.id)
 ```
 Fetching results:
 ```
@@ -172,14 +170,16 @@ platform = Platform.find_by(issuer: launch_data.issuer, client_id: launch_data.a
 token = LtiBridge::AccessToken.fetch(client_id: platform.client_id, 
                                         token_url: platform.token_url,
                                         scope: launch_data.ags_scope)
+ags = LtiBridge::AGS.new(access_token: token)          
 
-lineitem = LtiBridge::LineItem.find_by(
-      access_token: token,
-      lineitems_url: launch_data.ags_lineitems,
-      resource_link_id: launch_data.resource_link["id"])
-
-ags = LtiBridge::AGS.new(access_token: token)
-ags.get_results(lineitem_id: lineitem.id)
+line_item = ags.find_line_item(
+  lineitems_url: launch_data.ags_lineitems,
+  resource_link_id: launch_data.resource_link["id"]
+)
+results = ags.get_results(lineitem_id: line_item.id)
+results.each do |result|
+  puts "#{result.user_id}: #{result.result_score}"
+end
 ```
 
 ### NRPS

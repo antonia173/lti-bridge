@@ -1,7 +1,7 @@
 require "openid_connect"
 
 module LtiBridge
-  class OidcAuthUri
+  class OIDCAuthUri
     def initialize(issuer:, client_id:, auth_url:, state:, nonce:, login_hint:, lti_message_hint:, redirect_uri:)
       @issuer = issuer,
       @client_id = client_id
