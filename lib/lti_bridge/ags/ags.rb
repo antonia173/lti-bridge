@@ -147,7 +147,7 @@ module LtiBridge
       body_msg = response.body.to_s.strip
       msg = body_msg.empty? ? "" : " - #{body_msg}"
 
-      raise Error, "AGS API error: #{response.code}#{msg}"
+      raise "AGS API error: #{response.code}#{msg}"
     end
 
     def build_lineitem_sub_url(lineitem_id, suffix)
