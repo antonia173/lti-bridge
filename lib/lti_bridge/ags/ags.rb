@@ -70,7 +70,7 @@ module LtiBridge
       response = HTTParty.post(
         lineitems_url,
         headers: {
-          'Authorization' => "Bearer #{access_token}",
+          'Authorization' => "Bearer #{@access_token}",
           'Content-Type' => 'application/vnd.ims.lis.v2.lineitem+json'
         },
         body:    line_item.to_json
