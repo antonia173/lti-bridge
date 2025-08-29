@@ -5,6 +5,9 @@ module LtiBridge
                   :resource_link_id, :tag, :start_date_time,
                   :end_date_time, :grades_released
 
+    attr_writer :id
+    private :id=
+
     def initialize(label:, score_maximum:, resource_id: nil, resource_link_id: nil, tag: nil,
                    start_date_time: nil, end_date_time: nil, grades_released: nil)
       @label = label
@@ -49,15 +52,11 @@ module LtiBridge
         grades_released: data['gradesReleased']
       )
 
-      li.send(:set_id!, data["id"]) if data["id"]
+      li.id = data["id"]
       li
     end
 
     private
-
-    def set_id!(value)
-      @id = value
-    end
 
     def validate!
       raise ArgumentError, "label required" if @label.to_s.strip.empty?

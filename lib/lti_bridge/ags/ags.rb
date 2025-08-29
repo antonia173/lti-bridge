@@ -5,6 +5,7 @@ require "uri"
 require_relative "line_item"
 require_relative "score"
 require_relative "result"
+require_relative "logger"
 
 module LtiBridge
   class AGS
@@ -49,6 +50,8 @@ module LtiBridge
     end
 
     def get_line_item(lineitem_id:)
+      raise ArgumentError, "line item ID missing" unless lineitem_id
+
       response = HTTParty.get(
         lineitem_id,
         headers: {'Authorization' => "Bearer #{@access_token}",}
@@ -80,11 +83,11 @@ module LtiBridge
       LineItem.new_from_api_response(response_data)
     end
 
-    def update_line_item(line_item:)
-      raise ArgumentError, "line_item.id missing" unless line_item.id
+    def update_line_item(lineitem_id:)
+      raise ArgumentError, "line item ID missing" unless lineitem_id
 
       response = HTTParty.put(
-        line_item.id,
+        lineitem_id,
         headers: base_headers_json("application/vnd.ims.lis.v2.lineitem+json"),
         body:    line_item.to_json
       )
@@ -92,11 +95,11 @@ module LtiBridge
       LineItem.new_from_api_response(JSON.parse(response.body))
     end
 
-    def delete_line_item(line_item:)
-      raise ArgumentError, "line_item.id missing" unless line_item.id
+    def delete_line_item(lineitem_id:)
+      raise ArgumentError, "line item ID missing" unless lineitem_id
 
       response = HTTParty.delete(
-        line_item.id, 
+        lineitem_id, 
         headers: {'Authorization' => "Bearer #{@access_token}",}
       )
       raise_api!(response)
@@ -106,6 +109,8 @@ module LtiBridge
     # Score Service
     
     def submit_score(score:, lineitem_id:)
+      raise ArgumentError, "line item ID missing" unless lineitem_id
+
       score_url = build_lineitem_sub_url(lineitem_id, "scores")
       response = HTTParty.post(
         score_url,
@@ -145,9 +150,7 @@ module LtiBridge
       return if response.code.between?(200, 299)
 
       body_msg = response.body.to_s.strip
-      msg = body_msg.empty? ? "" : " - #{body_msg}"
-
-      raise "AGS API error: #{response.code}#{msg}"
+      raise "AGS API error: #{response.code}#{body_msg}"
     end
 
     def build_lineitem_sub_url(lineitem_id, suffix)
